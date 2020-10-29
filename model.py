@@ -43,7 +43,6 @@ class VGGFeature(nn.Module):
         for i, j in zip([-1] + indices, indices + [None]):
             if j is None:
                 break
-
             self.slices.append(vgg.features[slice(i + 1, j + 1)])
 
         self.use_fc = use_fc
@@ -440,3 +439,21 @@ class Discriminator(nn.Module):
         out_linear = out_linear + prod
 
         return out_linear.squeeze(1)
+
+
+if __name__ == "__main__":
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    vgg = VGGFeature("vgg16", [4, 9, 16, 23, 30], use_fc=True).eval().to(device)
+
+    input = torch.rand(1, 3, 224, 224).to(device)
+
+    features, fcs = vgg(input)
+
+    for feature in features:
+        print(feature.size())
+
+
+
+
+
